@@ -188,6 +188,11 @@ Request.prototype.request = function () {
     }
   }
   
+  // For PUTs and POSTS without a body set content-length to zero
+  if(~['PUT', 'POST'].indexOf(options.method) && typeof(options.headers['content-length']) === 'undefined' && !options.body) {
+    options.headers['content-length'] = 0;
+  }
+  
   options.httpModule = 
     {"http:":http, "https:":https}[options.proxy ? options.proxy.protocol : options.uri.protocol]
 
@@ -242,7 +247,7 @@ Request.prototype.request = function () {
 
         if (options.encoding) {
           if (options.dests.length !== 0) {
-            console.error("Ingoring encoding parameter as this stream is being piped to another stream which makes the encoding option invalid.");
+            console.error("Ignoring encoding parameter as this stream is being piped to another stream which makes the encoding option invalid.");
           } else {
             response.setEncoding(options.encoding);
           }
